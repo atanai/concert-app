@@ -5,6 +5,7 @@ import { HomeIcon, UserIcon, LogOutIcon, TrashIcon, BoxIcon, RefreshCcwIcon, Bad
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [activeSidebarBtn, setActiveSidebarBtn] = useState('home');
 
   const concerts = [
     {
@@ -30,15 +31,21 @@ export default function Home() {
         </div>
 
         <nav className="flex-1 space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+          <button 
+            onClick={() => setActiveSidebarBtn('home')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeSidebarBtn === 'home' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
             <HomeIcon size={20} />
             <span className="text-sm font-medium">Home</span>
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+          <button 
+            onClick={() => setActiveSidebarBtn('history')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeSidebarBtn === 'history' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
             <BoxIcon size={20} />
             <span className="text-sm font-medium">History</span>
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+          <button 
+            onClick={() => setActiveSidebarBtn('switch')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeSidebarBtn === 'switch' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
             <RefreshCcwIcon size={20} />
             <span className="text-sm font-medium">Switch to user</span>
           </button>
