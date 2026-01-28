@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { HomeIcon, UserIcon, LogOutIcon, TrashIcon, BoxIcon, RefreshCcwIcon, BadgeIcon, XCircleIcon, MenuIcon, XIcon } from 'lucide-react';
+import { HomeIcon, UserIcon, LogOutIcon, BoxIcon, RefreshCcwIcon, BadgeIcon, XCircleIcon, MenuIcon, XIcon, Trash2Icon } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('overview');
   const [activeSidebarBtn, setActiveSidebarBtn] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const concerts = [
     {
@@ -130,15 +131,18 @@ export default function Home() {
             <div className="space-y-3 md:space-y-4">
               {concerts.map((concert) => (
                 <div key={concert.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
-                  <h2 className="text-lg md:text-xl font-bold text-[#0070a4] mb-3">{concert.name}</h2>
+                  <h2 className="text-lg md:text-xl font-bold text-[#1692ec] mb-3">{concert.name}</h2>
+                  <div className="border-b border-gray-300 mb-4"></div>
                   <p className="text-gray-700 text-xs md:text-sm mb-4 leading-relaxed">{concert.description}</p>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-2 text-gray-700">
                       <UserIcon size={18} />
                       <span className="text-sm md:text-base font-medium">{concert.seats}</span>
                     </div>
-                    <button className="w-full sm:w-auto bg-[#e84e4e] hover:bg-[#d43a3a] text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition text-sm md:text-base">
-                      <TrashIcon size={16} />
+                    <button 
+                      onClick={() => setDeleteConfirm(concert.id)}
+                      className="w-full sm:w-auto bg-[#e84e4e] hover:bg-[#d43a3a] text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition text-sm md:text-base">
+                      <Trash2Icon size={16} />
                       <span className="font-medium">Delete</span>
                     </button>
                   </div>
@@ -154,6 +158,34 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-none backdrop-brightness-75 px-4">
+          <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto shadow-lg text-center">
+            <XCircleIcon size={36} className="md:size-[40px] text-red-600 mb-3 md:mb-4 mx-auto" />
+            <p className="text-sm md:text-base text-gray-600 mb-2 font-bold">Are you sure to delete?</p>
+            <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6 font-bold truncate">"{concerts.find(c => c.id === deleteConfirm)?.name}"</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 px-3 md:px-4 py-2 bg-gray-200 text-gray-800 text-xs md:text-sm rounded-sm hover:bg-gray-300 transition font-thin"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  console.log('Deleted concert:', deleteConfirm);
+                  setDeleteConfirm(null);
+                }}
+                className="flex-1 px-3 md:px-4 py-2 bg-[#e84e4e] text-white text-xs md:text-sm rounded-sm hover:bg-[#d43a3a] transition font-thin"
+              >
+                Yes,Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
