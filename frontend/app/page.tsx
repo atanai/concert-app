@@ -1,13 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { HomeIcon, UserIcon, LogOutIcon, BoxIcon, RefreshCcwIcon, BadgeIcon, XCircleIcon, MenuIcon, XIcon, Trash2Icon } from 'lucide-react';
+import { HomeIcon, UserIcon, LogOutIcon, BoxIcon, RefreshCcwIcon, BadgeIcon, XCircleIcon, MenuIcon, XIcon, Trash2Icon, SaveIcon } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('overview');
   const [activeSidebarBtn, setActiveSidebarBtn] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    seats: 500,
+    description: '',
+  });
 
   const concerts = [
     {
@@ -108,7 +113,7 @@ export default function Home() {
               <button
                 onClick={() => setActiveTab('overview')}
                 className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'overview'
-                  ? 'text-[#0070a4] border-b-2 border-[#0070a4]'
+                  ? 'text-[#1692ec] border-b-2 font-bold'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -117,7 +122,7 @@ export default function Home() {
               <button
                 onClick={() => setActiveTab('create')}
                 className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'create'
-                  ? 'text-[#0070a4] border-b-2 border-[#0070a4]'
+                  ? 'text-[#1692ec] border-b-2 font-bold'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -153,7 +158,65 @@ export default function Home() {
 
           {activeTab === 'create' && (
             <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
-              <p className="text-gray-600 text-sm md:text-base">Create new concert form goes here</p>
+              <h2 className="text-xl md:text-2xl font-bold text-[#1692ec] mb-6">Create</h2>
+              
+              <form className="space-y-6">
+                {/* Concert Name and Total Seats */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Concert Name</label>
+                    <input
+                      type="text"
+                      placeholder="Please input concert name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:border-transparent placeholder:text-gray-300"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Total of seat</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        placeholder="500"
+                        value={formData.seats}
+                        onChange={(e) => setFormData({ ...formData, seats: parseInt(e.target.value)})}
+                        className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:border-transparent placeholder:text-gray-300"
+                      />
+                      <UserIcon size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+                  <textarea
+                    placeholder="Please input description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={6}
+                    className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:border-transparent placeholder:text-gray-300"
+                  />
+                </div>
+
+                {/* Save Button */}
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log('Save concert:', formData);
+                      // Reset form
+                      setFormData({ name: '', seats: 500, description: '' });
+                    }}
+                    className="bg-[#1692ec] hover:bg-[#005a8b] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition font-medium text-sm md:text-base"
+                  >
+                    <SaveIcon size={18} />
+                    Save
+                  </button>
+                </div>
+              </form>
             </div>
           )}
         </div>
