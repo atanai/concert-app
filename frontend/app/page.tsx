@@ -10,7 +10,7 @@ export default function Home() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
-    seats: 500,
+    seats: 0,
     description: '',
   });
 
@@ -26,6 +26,23 @@ export default function Home() {
       name: 'Concert Name 2',
       description: 'Lorem ipsum dolor sit amet consectetur. Elit purus nam gravida porttitor nibh urna sit ornare a.',
       seats: 200,
+    },
+  ];
+
+  const history = [
+    {
+      id: 1,
+      dateTime: '12/09/2024 15:00:00',
+      username: 'Sara John',
+      concertName: 'The festival Int 2024',
+      action: 'Cancel',
+    },
+    {
+      id: 2,
+      dateTime: '12/09/2024 10:39:20',
+      username: 'Sara John',
+      concertName: 'The festival Int 2024',
+      action: 'Reserve',
     },
   ];
 
@@ -88,48 +105,54 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto w-full">
         <div className="p-4 md:p-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
-            <div className="bg-[#0070a4] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
-              <UserIcon size={28} className="mb-2" />
-              <p className="text-xs md:text-sm font-medium text-center">Total of seats</p>
-              <p className="text-3xl md:text-4xl font-bold">500</p>
-            </div>
-            <div className="bg-[#00a58b] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
-              <BadgeIcon size={28} className="mb-2" />
-              <p className="text-xs md:text-sm font-medium text-center">Reserve</p>
-              <p className="text-3xl md:text-4xl font-bold">120</p>
-            </div>
-            <div className="bg-[#e84e4e] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px] sm:col-span-2 lg:col-span-1">
-              <XCircleIcon size={28} className="mb-2" />
-              <p className="text-xs md:text-sm font-medium text-center">Cancel</p>
-              <p className="text-3xl md:text-4xl font-bold">12</p>
-            </div>
-          </div>
+          {activeSidebarBtn === 'home' && (
+            <>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+                <div className="bg-[#0070a4] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
+                  <UserIcon size={28} className="mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-center">Total of seats</p>
+                  <p className="text-3xl md:text-4xl font-bold">500</p>
+                </div>
+                <div className="bg-[#00a58b] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
+                  <BadgeIcon size={28} className="mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-center">Reserve</p>
+                  <p className="text-3xl md:text-4xl font-bold">120</p>
+                </div>
+                <div className="bg-[#e84e4e] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px] sm:col-span-2 lg:col-span-1">
+                  <XCircleIcon size={28} className="mb-2" />
+                  <p className="text-xs md:text-sm font-medium text-center">Cancel</p>
+                  <p className="text-3xl md:text-4xl font-bold">12</p>
+                </div>
+              </div>
+            </>
+          )}
 
-          {/* Tabs */}
-          <div className="border-b border-gray-200 mb-6 overflow-x-auto">
-            <div className="flex gap-4 md:gap-8">
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'overview'
-                  ? 'text-[#1692ec] border-b-2 font-bold'
-                  : 'text-gray-600 hover:text-gray-900'
-                  }`}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => setActiveTab('create')}
-                className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'create'
-                  ? 'text-[#1692ec] border-b-2 font-bold'
-                  : 'text-gray-600 hover:text-gray-900'
-                  }`}
-              >
-                Create
-              </button>
-            </div>
-          </div>
+          {activeSidebarBtn === 'home' && (
+            <>
+              {/* Tabs */}
+              <div className="border-b border-gray-200 mb-6 overflow-x-auto">
+                <div className="flex gap-4 md:gap-8">
+                  <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'overview'
+                      ? 'text-[#1692ec] border-b-2 font-bold'
+                      : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                  >
+                    Overview
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('create')}
+                    className={`pb-3 font-medium transition whitespace-nowrap text-sm md:text-base ${activeTab === 'create'
+                      ? 'text-[#1692ec] border-b-2 font-bold'
+                      : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
 
           {/* Concerts List */}
           {activeTab === 'overview' && (
@@ -217,6 +240,37 @@ export default function Home() {
                   </button>
                 </div>
               </form>
+            </div>
+          )}
+            </>
+          )}
+
+          {activeSidebarBtn === 'history' && (
+            <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6 overflow-x-auto">
+              <table className="w-full text-sm md:text-base">
+                <thead>
+                  <tr className="border-b border-gray-300 text-left">
+                    <th className="pb-3 px-3 md:px-4 text-gray-700 font-bold">Date time</th>
+                    <th className="pb-3 px-3 md:px-4 text-gray-700 font-bold">Username</th>
+                    <th className="pb-3 px-3 md:px-4 text-gray-700 font-bold">Concert name</th>
+                    <th className="pb-3 px-3 md:px-4 text-gray-700 font-bold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.map((record) => (
+                    <tr key={record.id} className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-3 md:px-4 text-gray-700">{record.dateTime}</td>
+                      <td className="py-3 px-3 md:px-4 text-gray-700">{record.username}</td>
+                      <td className="py-3 px-3 md:px-4 text-gray-700">{record.concertName}</td>
+                      <td className="py-3 px-3 md:px-4">
+                        <span className={`px-3 py-1 rounded-full text-gray-700 text-xs md:text-sm font-medium`}>
+                          {record.action}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
