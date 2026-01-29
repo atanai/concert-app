@@ -8,6 +8,7 @@ export default function Home() {
   const [activeSidebarBtn, setActiveSidebarBtn] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [isUserView, setIsUserView] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     seats: 0,
@@ -59,39 +60,58 @@ export default function Home() {
 
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? 'flex' : 'hidden'
-        } md:flex flex-col w-full md:w-40 bg-white border-b md:border-b-0 md:border-r border-gray-200 fixed md:relative top-16 md:top-0 left-0 right-0 z-50 md:z-auto max-h-[calc(100vh-64px)] md:max-h-screen md:h-screen overflow-y-auto md:overflow-y-auto`}>
+        } md:flex flex-col w-full md:w-48 lg:w-60 xl:w-72 bg-white border-b md:border-b-0 md:border-r border-gray-200 fixed md:relative top-16 md:top-0 left-0 right-0 z-50 md:z-auto max-h-[calc(100vh-64px)] md:max-h-screen md:h-screen overflow-y-auto md:overflow-y-auto`}>
         <div className="p-6 hidden md:block">
-          <h1 className="text-xl font-bold text-gray-900">Admin</h1>
+          <h1 className="text-xl font-bold text-gray-900">{isUserView ? 'User' : 'Admin'}</h1>
         </div>
 
         <nav className="flex-1 px-4 md:px-0 space-y-2">
-          <button
-            onClick={() => {
-              setActiveSidebarBtn('home');
-              setSidebarOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'home' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
-            <HomeIcon size={20} />
-            <span className="font-medium">Home</span>
-          </button>
-          <button
-            onClick={() => {
-              setActiveSidebarBtn('history');
-              setSidebarOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'history' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
-            <BoxIcon size={20} />
-            <span className="font-medium">History</span>
-          </button>
-          <button
-            onClick={() => {
-              setActiveSidebarBtn('switch');
-              setSidebarOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'switch' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
-            <RefreshCcwIcon size={20} className="flex-shrink-0" />
-            <span className="font-medium whitespace-nowrap">Switch to user</span>
-          </button>
+          {!isUserView && (
+            <>
+              <button
+                onClick={() => {
+                  setActiveSidebarBtn('home');
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'home' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
+                <HomeIcon size={20} />
+                <span className="font-medium">Home</span>
+              </button>
+              <button
+                onClick={() => {
+                  setActiveSidebarBtn('history');
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'history' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
+                <BoxIcon size={20} />
+                <span className="font-medium">History</span>
+              </button>
+            </>
+          )}
+          {isUserView && (
+            <button
+              onClick={() => {
+                setIsUserView(false);
+                setActiveSidebarBtn('home');
+                setSidebarOpen(false);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base text-gray-700 hover:bg-gray-100">
+              <RefreshCcwIcon size={20} className="flex-shrink-0" />
+              <span className="font-medium">Switch to Admin</span>
+            </button>
+          )}
+          {!isUserView && (
+            <button
+              onClick={() => {
+                setActiveSidebarBtn('switch');
+                setIsUserView(true);
+                setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm md:text-base ${activeSidebarBtn === 'switch' ? 'bg-[#eaf5f9] text-black' : 'text-gray-700 hover:bg-gray-100'}`}>
+              <RefreshCcwIcon size={20} className="flex-shrink-0" />
+              <span className="font-medium">Switch to user</span>
+            </button>
+          )}
         </nav>
 
         <div className="mt-auto p-4 border-t border-gray-200 px-4">
@@ -105,7 +125,29 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto w-full">
         <div className="p-4 md:p-8">
-          {activeSidebarBtn === 'home' && (
+          {isUserView && (
+            <div className="space-y-3 md:space-y-4">
+              {concerts.map((concert) => (
+                <div key={concert.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-bold text-[#1692ec] mb-3">{concert.name}</h2>
+                  <div className="border-b border-gray-300 mb-4"></div>
+                  <p className="text-gray-700 text-xs md:text-sm mb-4 leading-relaxed">{concert.description}</p>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <UserIcon size={18} />
+                      <span className="text-sm md:text-base font-medium">{concert.seats}</span>
+                    </div>
+                    <button 
+                      className="w-full sm:w-auto bg-[#e84e4e] hover:bg-[#d43a3a] text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition text-sm md:text-base">
+                      <span className="font-medium">Cancel</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!isUserView && activeSidebarBtn === 'home' && (
             <>
               {/* Stats Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
@@ -245,7 +287,7 @@ export default function Home() {
             </>
           )}
 
-          {activeSidebarBtn === 'history' && (
+          {!isUserView && activeSidebarBtn === 'history' && (
             <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6 overflow-x-auto">
               <table className="w-full text-sm md:text-base">
                 <thead>
