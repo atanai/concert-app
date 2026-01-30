@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserIcon, BadgeIcon, XCircleIcon, Trash2Icon, SaveIcon } from 'lucide-react';
 import { concerts } from '../data/mockData';
 
@@ -12,6 +12,25 @@ export default function AdminHome() {
     seats: 0,
     description: '',
   });
+  const [seatsInfo, setSeatsInfo] = useState({
+    total: 0,
+    reserved: 0,
+    canceled: 0,
+  });
+
+  useEffect(() => {
+    const result = concerts.reduce(
+      (acc, concert) => {
+        acc.total += concert.seats;
+        acc.reserved += concert.bookings?.length || 0;
+        acc.canceled += concert.cancellations?.length || 0;
+        return acc;
+      },
+      { total: 0, reserved: 0, canceled: 0 }
+    );
+
+    setSeatsInfo(result);
+  }, [concerts]);
 
   return (
     <>
@@ -20,17 +39,17 @@ export default function AdminHome() {
         <div className="bg-[#0070a4] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
           <UserIcon size={28} className="mb-2" />
           <p className="text-xs md:text-sm font-medium text-center">Total of seats</p>
-          <p className="text-3xl md:text-4xl font-bold">500</p>
+          <p className="text-3xl md:text-4xl font-bold">{seatsInfo.total}</p>
         </div>
         <div className="bg-[#00a58b] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px]">
           <BadgeIcon size={28} className="mb-2" />
           <p className="text-xs md:text-sm font-medium text-center">Reserve</p>
-          <p className="text-3xl md:text-4xl font-bold">120</p>
+          <p className="text-3xl md:text-4xl font-bold">{seatsInfo.reserved}</p>
         </div>
         <div className="bg-[#e84e4e] text-white rounded-lg p-6 flex flex-col items-center justify-center min-h-[160px] sm:col-span-2 lg:col-span-1">
           <XCircleIcon size={28} className="mb-2" />
           <p className="text-xs md:text-sm font-medium text-center">Cancel</p>
-          <p className="text-3xl md:text-4xl font-bold">12</p>
+          <p className="text-3xl md:text-4xl font-bold">{seatsInfo.canceled}</p>
         </div>
       </div>
 
@@ -71,7 +90,7 @@ export default function AdminHome() {
                   <UserIcon size={18} />
                   <span className="text-sm md:text-base font-medium">{concert.seats}</span>
                 </div>
-                <button 
+                <button
                   onClick={() => setDeleteConfirm(concert.id)}
                   className="w-full sm:w-auto bg-[#e84e4e] hover:bg-[#d43a3a] text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition text-sm md:text-base">
                   <Trash2Icon size={16} />
@@ -87,7 +106,7 @@ export default function AdminHome() {
       {activeTab === 'create' && (
         <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6">
           <h2 className="text-xl md:text-2xl font-bold text-[#1692ec] mb-6">Create</h2>
-          
+
           <form className="space-y-6">
             {/* Concert Name and Total Seats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,7 +120,7 @@ export default function AdminHome() {
                   className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:border-transparent placeholder:text-gray-300"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-2">Total of seat</label>
                 <div className="relative">
@@ -109,7 +128,7 @@ export default function AdminHome() {
                     type="number"
                     placeholder="500"
                     value={formData.seats}
-                    onChange={(e) => setFormData({ ...formData, seats: parseInt(e.target.value)})}
+                    onChange={(e) => setFormData({ ...formData, seats: parseInt(e.target.value) })}
                     className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:border-transparent placeholder:text-gray-300"
                   />
                   <UserIcon size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
