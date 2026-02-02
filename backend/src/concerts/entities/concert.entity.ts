@@ -1,0 +1,6 @@
+export class Concert {
+  id: number;
+  name: string;
+  description: string;
+  seats: number;
+}
