@@ -10,6 +10,8 @@ export default function AdminHome() {
     name: '',
     seats: 0,
     description: '',
+    reservedSeats: 0,
+    cancelledSeats: 0,
   });
   const [seatsInfo, setSeatsInfo] = useState({
     total: 0,
@@ -56,16 +58,20 @@ export default function AdminHome() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+      
 
-      if (!res.ok) throw new Error('Failed to save');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || res.statusText);
+      }
 
-      setFormData({ name: '', seats: 0, description: '' });
+      setFormData({ name: '', seats: 0, description: '', reservedSeats: 0, cancelledSeats: 0 });
 
       setActiveTab('overview');
       await fetchConcerts();
-    } catch (err) {
+    } catch (err: Error | any) {
       console.error(err);
-      alert('Error saving concert');
+      alert(err.message || 'Save failed');
     }
   };
 

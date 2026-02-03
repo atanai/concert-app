@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateConcertDto } from './dto/create-concert.dto';
-import { UpdateConcertDto } from './dto/update-concert.dto';
 import { Concert } from './entities/concert.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
 export class ConcertsService {
@@ -12,9 +11,27 @@ export class ConcertsService {
     private concertsRepository: Repository<Concert>,
   ) { }
 
-  create(createConcertDto: CreateConcertDto) {
-    const concert = this.concertsRepository.create(createConcertDto);
-    return this.concertsRepository.save(concert);
+  async create(createConcertDto: CreateConcertDto) {
+    try {
+      const concert = this.concertsRepository.create(createConcertDto);
+      return await this.concertsRepository.save(concert);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        const pgError = error as any;
+
+        // unique constraint violation
+        if (pgError.code === '23505') {
+          throw new BadRequestException('Concert name already exists');
+        }
+
+        // not null violation
+        if (pgError.code === '23502') {
+          throw new BadRequestException('Missing required field');
+        }
+      }
+
+      throw new InternalServerErrorException('Failed to create concert');
+    }
   }
 
   findAll() {
@@ -23,10 +40,6 @@ export class ConcertsService {
 
   findOne(id: number) {
     return `This action returns a #${id} concert`;
-  }
-
-  update(id: number, updateConcertDto: UpdateConcertDto) {
-    return `This action updates a #${id} concert`;
   }
 
   async remove(id: number) {

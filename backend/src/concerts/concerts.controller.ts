@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ConcertsService } from './concerts.service';
 import { CreateConcertDto } from './dto/create-concert.dto';
-import { UpdateConcertDto } from './dto/update-concert.dto';
 
 @Controller('concerts')
 export class ConcertsController {
@@ -20,11 +19,6 @@ export class ConcertsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.concertsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateConcertDto: UpdateConcertDto) {
-    return this.concertsService.update(+id, updateConcertDto);
   }
 
   @Delete(':id')

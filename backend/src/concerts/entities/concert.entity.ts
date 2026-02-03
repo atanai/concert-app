@@ -1,16 +1,22 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('concerts')
 export class Concert {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true})
   name: string;
 
-  @Column({ unique: true })
+  @Column()
   description: string;
 
   @Column()
   seats: number;
+
+  @Column()
+  reservedSeats: number;
+
+  @Column()
+  cancelledSeats: number;
 }
