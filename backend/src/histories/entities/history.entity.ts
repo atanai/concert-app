@@ -1,12 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('logs')
-export class Log {
+@Entity('histories')
+export class History {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  date: Date;
+  dateTime: string;
 
   @Column()
   userId: number;
@@ -15,5 +15,5 @@ export class Log {
   concertId: number;
 
   @Column()
-  action: number; // 0 - cancel, 1 - reserve
+  action: number; // 0 for cancellation, 1 for reservation
 }

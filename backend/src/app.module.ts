@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConcertsModule } from './concerts/concerts.module';
 import { UsersModule } from './users/users.module';
-import { LogsModule } from './logs/logs.module';
+import { HistoriesModule } from './histories/histories.module';
 
 @Module({
   imports: [
@@ -18,7 +18,8 @@ import { LogsModule } from './logs/logs.module';
     }),
     ConcertsModule,
     UsersModule,
-    LogsModule,
+    HistoriesModule,
+    HistoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
