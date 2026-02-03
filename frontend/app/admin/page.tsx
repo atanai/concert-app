@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { UserIcon, BadgeIcon, XCircleIcon, Trash2Icon, SaveIcon } from 'lucide-react';
-import { concerts } from '../data/mockData';
+
 
 export default function AdminHome() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -17,20 +17,39 @@ export default function AdminHome() {
     reserved: 0,
     canceled: 0,
   });
+  const [concerts, setConcerts] = useState([]);
+
+  const handleSave = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/concerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save concert');
+      }
+
+      const data = await res.json();
+      console.log('Saved:', data);
+
+      // reset form
+      setFormData({ name: '', seats: 0, description: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Error saving concert');
+    }
+  };
 
   useEffect(() => {
-    const result = concerts.reduce(
-      (acc, concert) => {
-        acc.total += concert.seats;
-        acc.reserved += concert.bookings?.length || 0;
-        acc.canceled += concert.cancellations?.length || 0;
-        return acc;
-      },
-      { total: 0, reserved: 0, canceled: 0 }
-    );
-
-    setSeatsInfo(result);
-  }, [concerts]);
+    fetch('http://localhost:3001/concerts')
+      .then((res) => res.json())
+      .then(setConcerts)
+      .catch(console.error);
+  }, []);
 
   return (
     <>
@@ -152,10 +171,7 @@ export default function AdminHome() {
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => {
-                  console.log('Save concert:', formData);
-                  setFormData({ name: '', seats: 0, description: '' });
-                }}
+                onClick={handleSave}
                 className="bg-[#1692ec] hover:bg-[#005a8b] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition font-medium text-sm md:text-base"
               >
                 <SaveIcon size={18} />
