@@ -14,9 +14,9 @@ export class Concert {
   @Column()
   seats: number;
 
-  @Column()
-  reservedSeats: number;
+  @Column('integer', { array: true })
+  reservedSeats: number[];
 
-  @Column()
-  cancelledSeats: number;
+  @Column('integer', { array: true })
+  cancelledSeats: number[];
 }

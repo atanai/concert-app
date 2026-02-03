@@ -10,8 +10,8 @@ export default function AdminHome() {
     name: '',
     seats: 0,
     description: '',
-    reservedSeats: 0,
-    cancelledSeats: 0,
+    reservedSeats: [],
+    cancelledSeats: [],
   });
   const [seatsInfo, setSeatsInfo] = useState({
     total: 0,
@@ -65,7 +65,7 @@ export default function AdminHome() {
         throw new Error(data.message || res.statusText);
       }
 
-      setFormData({ name: '', seats: 0, description: '', reservedSeats: 0, cancelledSeats: 0 });
+      setFormData({ name: '', seats: 0, description: '', reservedSeats: [], cancelledSeats: [] });
 
       setActiveTab('overview');
       await fetchConcerts();
@@ -108,8 +108,8 @@ export default function AdminHome() {
 
     setSeatsInfo({
       total,
-      reserved: 0,
-      canceled: 0,
+      reserved: concerts.reduce((sum, c) => sum + c.reservedSeats.length, 0),
+      canceled: concerts.reduce((sum, c) => sum + c.cancelledSeats.length, 0),
     });
   }, [concerts]);
 

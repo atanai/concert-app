@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsArray } from 'class-validator';
 
 export class CreateConcertDto {
     @IsString()
@@ -10,9 +10,9 @@ export class CreateConcertDto {
     @IsNumber()
     seats: number;
 
-    @IsNumber()
-    reservedSeats: number;
+    @IsArray()
+    reservedSeats: number[]; // User IDs of reserved seats
 
-    @IsNumber()
-    cancelledSeats: number;
+    @IsArray()
+    cancelledSeats: number[]; // User IDs of cancelled seats
 }
