@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { UserIcon, BadgeIcon, XCircleIcon, Trash2Icon, SaveIcon } from 'lucide-react';
 
-
 export default function AdminHome() {
   const [activeTab, setActiveTab] = useState('overview');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -18,38 +17,81 @@ export default function AdminHome() {
     canceled: 0,
   });
   const [concerts, setConcerts] = useState([]);
+  const [errors, setErrors] = useState({
+    name: '',
+    seats: '',
+    description: '',
+  });
+
+  const validateForm = () => {
+    const newErrors = {
+      name: '',
+      seats: '',
+      description: '',
+    };
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Concert name is required';
+    }
+
+    if (!formData.seats || formData.seats <= 0) {
+      newErrors.seats = 'Total seats must be greater than 0';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+
+    setErrors(newErrors);
+
+    // true = ผ่าน
+    return !Object.values(newErrors).some(Boolean);
+  };
 
   const handleSave = async () => {
+    if (!validateForm()) return;
     try {
       const res = await fetch('http://localhost:3001/concerts', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) {
-        throw new Error('Failed to save concert');
-      }
+      if (!res.ok) throw new Error('Failed to save');
 
-      const data = await res.json();
-      console.log('Saved:', data);
-
-      // reset form
       setFormData({ name: '', seats: 0, description: '' });
+
+      setActiveTab('overview');
+      await fetchConcerts();
     } catch (err) {
       console.error(err);
       alert('Error saving concert');
     }
   };
 
+  const fetchConcerts = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/concerts');
+      const data = await res.json();
+      setConcerts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    fetch('http://localhost:3001/concerts')
-      .then((res) => res.json())
-      .then(setConcerts)
-      .catch(console.error);
+    fetchConcerts();
   }, []);
+
+  useEffect(() => {
+    const total = concerts.reduce((sum, c) => sum + c.seats, 0);
+
+    setSeatsInfo({
+      total,
+      reserved: 0,
+      canceled: 0,
+    });
+  }, [concerts]);
 
   return (
     <>
@@ -131,6 +173,9 @@ export default function AdminHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-2">Concert Name</label>
+                {errors.name && (
+                  <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                )}
                 <input
                   type="text"
                   placeholder="Please input concert name"
@@ -142,6 +187,9 @@ export default function AdminHome() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-2">Total of seat</label>
+                {errors.seats && (
+                  <p className="text-sm text-red-500 mt-1">{errors.seats}</p>
+                )}
                 <div className="relative">
                   <input
                     type="number"
@@ -158,6 +206,9 @@ export default function AdminHome() {
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+              {errors.description && (
+                <p className="text-sm text-red-500 mt-1">{errors.description}</p>
+              )}
               <textarea
                 placeholder="Please input description"
                 value={formData.description}
