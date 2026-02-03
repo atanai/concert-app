@@ -69,6 +69,20 @@ export default function AdminHome() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      await fetch(`http://localhost:3001/concerts/${id}`, {
+        method: 'DELETE',
+      });
+
+      // update UI without refetch
+      setConcerts(prev => prev.filter(c => c.id !== id));
+
+      setDeleteConfirm(null);
+    } catch (err) {
+      console.error('Delete failed', err);
+    }
+  };
   const fetchConcerts = async () => {
     try {
       const res = await fetch('http://localhost:3001/concerts');
@@ -248,10 +262,7 @@ export default function AdminHome() {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  console.log('Deleted concert:', deleteConfirm);
-                  setDeleteConfirm(null);
-                }}
+                onClick={() => handleDelete(deleteConfirm)}
                 className="flex-1 px-3 md:px-4 py-2 bg-[#e84e4e] text-white text-xs md:text-sm rounded-sm hover:bg-[#d43a3a] transition font-thin"
               >
                 Yes,Delete

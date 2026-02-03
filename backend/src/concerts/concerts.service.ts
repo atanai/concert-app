@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateConcertDto } from './dto/create-concert.dto';
 import { UpdateConcertDto } from './dto/update-concert.dto';
@@ -7,10 +7,10 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ConcertsService {
-   constructor(
+  constructor(
     @InjectRepository(Concert)
     private concertsRepository: Repository<Concert>,
-  ) {}
+  ) { }
 
   create(createConcertDto: CreateConcertDto) {
     const concert = this.concertsRepository.create(createConcertDto);
@@ -29,7 +29,15 @@ export class ConcertsService {
     return `This action updates a #${id} concert`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} concert`;
+  async remove(id: number) {
+    const concert = await this.concertsRepository.findOneBy({ id });
+
+    if (!concert) {
+      throw new NotFoundException('Concert not found');
+    }
+
+    await this.concertsRepository.remove(concert);
+
+    return { success: true };
   }
 }
