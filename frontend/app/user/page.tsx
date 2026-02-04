@@ -12,7 +12,7 @@ type Concert = {
   cancelledSeats: number[];
 };
 
-const currentUserId = 0;
+const currentUserId = 1;
 
 export default function UserPage() {
   const [concerts, setConcerts] = useState<Concert[]>([]);

@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, DeleteDateColumn } from 'typeorm';
 
 @Entity('concerts')
 export class Concert {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true})
+  @Column({ unique: true })
   name: string;
 
   @Column()
@@ -19,4 +19,7 @@ export class Concert {
 
   @Column('integer', { array: true })
   cancelledSeats: number[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

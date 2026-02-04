@@ -1,9 +1,6 @@
 import { IsNumber, IsString } from "class-validator";
 
-export class CreateHistoryDto {
-    @IsString()
-    dateTime: string;
-    
+export class CreateHistoryDto {    
     @IsNumber()
     userId: number;
 

@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 type HistoryRecord = {
   id: number;
   dateTime: string;     // or createdAt from backend
-  username: string;
-  concertName: string;
-  action: string;
+  user: string;
+  concert: string;
+  action: number;
 };
 
 export default function AdminHistory() {
@@ -48,14 +48,14 @@ export default function AdminHistory() {
           </tr>
         </thead>
         <tbody>
-          {history.map((record) => (
+          {[...history].reverse().map((record) => (
             <tr key={record.id} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="py-3 px-3 md:px-4 text-gray-700 border">{record.dateTime}</td>
-              <td className="py-3 px-3 md:px-4 text-gray-700 border">{record.username}</td>
-              <td className="py-3 px-3 md:px-4 text-gray-700 border">{record.concertName}</td>
+              <td className="py-3 px-3 md:px-4 text-gray-700 border">{record.user}</td>
+              <td className="py-3 px-3 md:px-4 text-gray-700 border">{record.concert}</td>
               <td className="py-3 px-3 md:px-4 text-gray-700 border">
                 <span className={`px-3 py-1 md:px-0 rounded-full text-gray-700 md:text-sm font-medium `}>
-                  {record.action}
+                  {record.action === 0 ? "Cancelled" : "Reserved"}
                 </span>
               </td>
             </tr>

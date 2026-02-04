@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { History } from './entities/history.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common/typeorm.decorators';
 
@@ -12,12 +12,28 @@ export class HistoriesService {
     private historiesRepository: Repository<History>,
   ) { }
 
-  create(createHistoryDto: CreateHistoryDto) {
-    return 'This action adds a new history';
+  async create(createHistoryDto: CreateHistoryDto) {
+    const history = this.historiesRepository.create({
+      userId: createHistoryDto.userId,
+      concertId: createHistoryDto.concertId,
+      action: createHistoryDto.action,
+    });
+
+    return await this.historiesRepository.save(history);
   }
 
-  findAll() {
-    return this.historiesRepository.find();
+  async findAll() {
+    const histories = await this.historiesRepository.find({
+      relations: ['user', 'concert'],
+      withDeleted: true,
+    });
+    return histories.map(h => ({
+      id: h.id,
+      dateTime: h.dateTime,
+      action: h.action,
+      user: h.user.name,
+      concert: h.concert.name,
+    }));
   }
 
   findOne(id: number) {

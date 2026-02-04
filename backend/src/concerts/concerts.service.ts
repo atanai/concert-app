@@ -4,12 +4,14 @@ import { CreateConcertDto } from './dto/create-concert.dto';
 import { Concert } from './entities/concert.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UpdateConcertDto } from './dto/update-concert.dto';
+import { HistoriesService } from 'src/histories/histories.service';
 
 @Injectable()
 export class ConcertsService {
   constructor(
     @InjectRepository(Concert)
     private concertsRepository: Repository<Concert>,
+    private readonly historiesService: HistoriesService
   ) { }
 
   async create(createConcertDto: CreateConcertDto) {
@@ -54,7 +56,8 @@ export class ConcertsService {
       throw new NotFoundException('Concert not found');
     }
 
-    await this.concertsRepository.remove(concert);
+    // await this.concertsRepository.remove(concert);
+    await this.concertsRepository.softDelete(id);
 
     return { success: true };
   }
@@ -76,6 +79,11 @@ export class ConcertsService {
 
     concert.reservedSeats.push(userId);
 
+    await this.historiesService.create({
+      userId,
+      concertId,
+      action: 1, // reserve
+    });
     return this.concertsRepository.save(concert);
   }
 
@@ -95,6 +103,12 @@ export class ConcertsService {
     );
 
     concert.cancelledSeats.push(userId);
+
+    await this.historiesService.create({
+      userId,
+      concertId,
+      action: 0 // cancel
+    });
 
     return this.concertsRepository.save(concert);
   }
