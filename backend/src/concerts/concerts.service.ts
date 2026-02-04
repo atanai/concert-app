@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateConcertDto } from './dto/create-concert.dto';
 import { Concert } from './entities/concert.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { UpdateConcertDto } from './dto/update-concert.dto';
 
 @Injectable()
 export class ConcertsService {
@@ -42,6 +43,10 @@ export class ConcertsService {
     return `This action returns a #${id} concert`;
   }
 
+  update(id: number, updateConcertDto: UpdateConcertDto) {
+    return `This action updates a #${id} concert`;
+  }
+
   async remove(id: number) {
     const concert = await this.concertsRepository.findOneBy({ id });
 
@@ -52,5 +57,45 @@ export class ConcertsService {
     await this.concertsRepository.remove(concert);
 
     return { success: true };
+  }
+
+  async reserveSeat(concertId: number, userId: number) {
+    const concert = await this.concertsRepository.findOne({
+      where: { id: concertId },
+    });
+
+    if (!concert) throw new NotFoundException();
+
+    if (concert.reservedSeats.includes(userId)) {
+      throw new BadRequestException('Already reserved');
+    }
+
+    if (concert.reservedSeats.length >= concert.seats) {
+      throw new BadRequestException('Concert is full');
+    }
+
+    concert.reservedSeats.push(userId);
+
+    return this.concertsRepository.save(concert);
+  }
+
+  async cancelSeat(concertId: number, userId: number) {
+    const concert = await this.concertsRepository.findOne({
+      where: { id: concertId },
+    });
+
+    if (!concert) throw new NotFoundException();
+
+    if (!concert.reservedSeats.includes(userId)) {
+      throw new BadRequestException('Not reserved');
+    }
+
+    concert.reservedSeats = concert.reservedSeats.filter(
+      id => id !== userId,
+    );
+
+    concert.cancelledSeats.push(userId);
+
+    return this.concertsRepository.save(concert);
   }
 }

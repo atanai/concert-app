@@ -40,12 +40,57 @@ export default function UserPage() {
     fetchConcerts();
   }, []);
 
-  const cancelReservation = (concertId: number) => {
-    console.log('Cancel reservation for concert ID:', concertId);
+  const reserveSeat = async (concertId: number) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3001/concerts/${concertId}/reserve`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUserId }),
+        }
+      );
+
+      if (!res.ok) throw new Error('Reserve failed');
+
+      const updatedConcert = await res.json();
+
+      // update state
+      setConcerts(prev =>
+        prev.map(c =>
+          c.id === concertId ? updatedConcert : c
+        )
+      );
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
-  const reserveSeat = (concertId: number) => {
-    console.log('Reserve seat for concert ID:', concertId);
+
+  const cancelReservation = async (concertId: number) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3001/concerts/${concertId}/cancel`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUserId }),
+        }
+      );
+
+      if (!res.ok) throw new Error('Cancel failed');
+
+      const updatedConcert = await res.json();
+
+      // update state
+      setConcerts(prev =>
+        prev.map(c =>
+          c.id === concertId ? updatedConcert : c
+        )
+      );
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   return (
