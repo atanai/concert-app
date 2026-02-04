@@ -5,10 +5,20 @@ import { HistoriesService } from './histories.service';
 describe('HistoriesController', () => {
   let controller: HistoriesController;
 
+  const mockHistoriesService = {
+    findAll: jest.fn(),
+    create: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HistoriesController],
-      providers: [HistoriesService],
+      providers: [
+        {
+          provide: HistoriesService,
+          useValue: mockHistoriesService,
+        },
+      ],
     }).compile();
 
     controller = module.get<HistoriesController>(HistoriesController);
