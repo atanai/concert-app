@@ -1,8 +1,41 @@
 'use client';
 
-import { history } from '../../data/mockData';
+import { useEffect, useState } from "react";
+
+type HistoryRecord = {
+  id: number;
+  dateTime: string;     // or createdAt from backend
+  username: string;
+  concertName: string;
+  action: string;
+};
 
 export default function AdminHistory() {
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHistories = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/histories');
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch histories');
+        }
+
+        const data = await res.json();
+        setHistory(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistories();
+  }, []);
+
   return (
     <div>
       <table className="w-full text-sm border border-gray-300 border-collapse">
